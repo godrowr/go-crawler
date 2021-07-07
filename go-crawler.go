@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 func main() {
@@ -20,15 +23,23 @@ func main() {
 	}
 	input = strings.TrimSuffix(input, "\n")
 	u, err := url.ParseRequestURI(input)
-	fmt.Printf(": err=%+v url=%+v\n", err, u)
 	if err != nil {
 		fmt.Println("String inputted was not a URL", err)
 		return
 	}
-	resp, err := http.Get(input)
+	crawl(u)
+}
+
+func crawl(input *url.URL) {
+	fmt.Println(input.String())
+	resp, err := http.Get(input.String())
 	if err != nil {
 		fmt.Println("GET request could not be processed correctly", err)
 		return
+	}
+	base, err := url.Parse(input.String())
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -36,6 +47,31 @@ func main() {
 		fmt.Println("BODY could not be obtained from GET request", err)
 		return
 	}
-	fmt.Println(string(body))
-	//http://www.rescale.com
+
+	doc, err := html.Parse(strings.NewReader(string(body)))
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "a" {
+			for _, a := range n.Attr {
+				if a.Key == "href" && len(a.Val) > 0 {
+					url, err := url.ParseRequestURI(a.Val)
+					if err != nil {
+						log.Fatal(err)
+					}
+					URL := base.ResolveReference(url).String()
+					if url.Scheme != "tel" && strings.Compare(URL, input.String()) != 0 {
+						fmt.Println(" " + URL)
+					}
+					break
+				}
+
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+
+	//http://www.rescale.com/
 }
