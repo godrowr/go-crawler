@@ -5,6 +5,16 @@ go run go-crawler.go http://www.rescale.com
 ```
 The script then visits and outputs all the links 'a href' visible on that webpage. 
 Only visits links with the same domain as the url input arguement to avoid an infinite web crawler scenario. 
+
+## Tests
+```
+git checkout old-solution
+go run go-crawler.go http://www.rescale.com >> old-solution.txt
+```
+```
+git checkout improved-solution
+go run go-crawler.go http://www.rescale.com >> improved-solution.txt
+```
   
 ## Specifications
   - Fetch the HTML document from the input URL
