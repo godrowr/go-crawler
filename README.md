@@ -6,6 +6,8 @@ go run go-crawler.go http://www.rescale.com
 The script then visits and outputs all the links 'a href' visible on that webpage. 
 Only visits links with the same domain as the url input arguement to avoid an infinite web crawler scenario. 
 
+Though there is the improved-solution and the old-solution, main is currently the improved-solution, until I improve it even more. 
+
 ## Tests
 ```
 git checkout old-solution
