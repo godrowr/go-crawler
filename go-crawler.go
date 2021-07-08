@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -22,15 +22,14 @@ then calls map_loop to begin crawling the sites and inserting the
 results into a map.
 */
 func main() {
-	fmt.Println("Enter site to crawl (ex: http://www.rescale.com/):")
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Println("An error occured while reading input. Please try again", err)
-		return
+	flag.Parse()
+	args := flag.Args()
+	fmt.Println("Scraping", args[0])
+	if len(args) < 1 {
+		fmt.Println("No input arguement supplied")
+		os.Exit(1)
 	}
-	input = strings.TrimSuffix(input, "\n")
-	u, err := url.ParseRequestURI(input)
+	u, err := url.ParseRequestURI(args[0])
 	if err != nil {
 		fmt.Println("String inputted was not a URL", err)
 		return
