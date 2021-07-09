@@ -31,27 +31,7 @@ Typically I start out with some sort of vague idea in the steps of building the 
 ### The Old solution 	
   So originally the go-crawler was built using standard go libraries only, implementing
   the 4 main specs through several methods. It used a map to store all the links and record if they were visited or not. It's time complexity was O(n^3) as it had a double recursive function call and a for loop. Very slow but this was my first web scraper in Go so I didn't expect too much.
-  
-  ```go
-  //This has to be some sort of Eldritch Abomination. 
-  func map_loop(input string) {
-	crawl_site(input)
-	for URL, visited := range links { //TODO
-		if visited == "Not-Visited" && strings.Contains(URL, host) {
-			links[URL] = "Visited"
-			crawl_site(URL)
-		} else {
-			links[URL] = "Visited"
-		}
-	}
-	for URL, visited := range links {
-		if visited == "Not-Visited" {
-			map_loop(URL)
-		}
-	}
-	os.Exit(0)
-}
-  ```
+
   
 ### The Improved solution
 Uses the open source module 'colly' which is build for Go web scapers. The performance improved significantly and the amount of code was vastly reduced. 
